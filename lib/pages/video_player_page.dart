@@ -11,7 +11,7 @@ class VideoPlayePage extends StatefulWidget {
 }
 
 class _VideoPlayePageState extends State<VideoPlayePage> {
-  late CustomVideoPlayerController _customVideoPlayerController;
+  late CustomVideoPlayerController? _customVideoPlayerController;
 
   Source currentSource = Source.asset;
 
@@ -28,7 +28,7 @@ class _VideoPlayePageState extends State<VideoPlayePage> {
   @override
   void dispose() {
     super.dispose();
-    _customVideoPlayerController.dispose();
+    _customVideoPlayerController?.dispose();
   }
 
   @override
@@ -42,7 +42,7 @@ class _VideoPlayePageState extends State<VideoPlayePage> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 CustomVideoPlayer(
-                  customVideoPlayerController: _customVideoPlayerController,
+                  customVideoPlayerController: _customVideoPlayerController!,
                 ),
                 _sourceButtons(),
               ],
@@ -52,6 +52,8 @@ class _VideoPlayePageState extends State<VideoPlayePage> {
 
   void initializeVideoPlayer(Source source) {
     isLoading = true;
+    // Dispose of the previous video player if it exists
+
     VideoPlayerController videoPlayerController;
     if (source == Source.asset) {
       videoPlayerController = VideoPlayerController.asset(assetVideopath)
@@ -93,6 +95,9 @@ class _VideoPlayePageState extends State<VideoPlayePage> {
             ),
             onPressed: () {
               setState(() {
+                if (_customVideoPlayerController != null) {
+                  _customVideoPlayerController!.videoPlayerController.dispose();
+                }
                 currentSource = Source.network;
                 initializeVideoPlayer(currentSource);
               });
@@ -105,6 +110,9 @@ class _VideoPlayePageState extends State<VideoPlayePage> {
             ),
             onPressed: () {
               setState(() {
+                if (_customVideoPlayerController != null) {
+                  _customVideoPlayerController!.videoPlayerController.dispose();
+                }
                 currentSource = Source.asset;
                 initializeVideoPlayer(currentSource);
               });
